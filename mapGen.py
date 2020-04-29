@@ -4,6 +4,7 @@ def createMap():
     import pandas
     from StravaApi import getDataset
     import polyline
+    from markerGen import insertMarkers
 
     #for onclick iframe with certain info:
     html = """Title: %s <br>
@@ -16,7 +17,9 @@ def createMap():
     #folium.TileLayer('cartodbdark_matter').add_to(my_map) #if you want to add more layers
 
     data = getDataset()
-
+    foltracks=[]
+    iframes=[]
+    popups = []
     fgp = folium.FeatureGroup(name="Tracks") #all tracks are added to this feature group
 
     #loop to parse all the activities and get polyline for it
@@ -32,11 +35,19 @@ def createMap():
         str(distance*0.000621371).split(sep='.', maxsplit=1)[0],
         str(gain*3.28).split(sep='.', maxsplit=1)[0]),
         width=200, height=100)
-        fgp.add_child(folium.PolyLine(track, color="red", weight=2.5, opacity=1, popup=folium.Popup(iframe)))
+        fpopup = folium.Popup(iframe)
+        foltrack = folium.PolyLine(track, color="red", weight=2.5, opacity=1, popup=fpopup)
+        fgp.add_child(foltrack) #add track to feature group
+
+        foltracks.append(foltrack.get_name()) #add folium ID to list for marker later
+        iframes.append(iframe.get_name())
+        popups.append(fpopup.get_name())
+
 
     map.add_child(fgp)
     map.add_child(folium.LayerControl())
-
     map.save("templates/MapAllActivities.html")
+
+    insertMarkers(foltracks, iframes, popups, fgp.get_name())
 
 createMap()
