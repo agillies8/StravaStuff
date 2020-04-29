@@ -22,7 +22,7 @@ def insertMarkers(foltracks, iframes, popups, fgroup):
     contents = f.readlines()
     f.close()
 
-    contents.insert(14, "    <script src=\"AnimatedMarker.js\"></script>\n")
+    contents.insert(13, "    <script src=\"AnimatedMarker.js\"></script>\n")
 
     f = open(page_path, "w")
     contents = "".join(contents)
